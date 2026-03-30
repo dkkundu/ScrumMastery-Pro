@@ -12,9 +12,11 @@ const JWT_SECRET = process.env.JWT_SECRET || 'scrum-simulator-local-secret'
 const PORT = parseInt(process.env.BACKEND_PORT) || 6001
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@gmail.com'
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin'
+const DB_PATH = process.env.DB_PATH || join(__dirname, 'database.sqlite')
+const IS_PROD = process.env.NODE_ENV === 'production'
 
 // ─── SQLite Setup ─────────────────────────────────────────────────────────────
-const db = new Database(join(__dirname, 'database.sqlite'))
+const db = new Database(DB_PATH)
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
@@ -86,6 +88,9 @@ const requireAdmin = (req, res, next) => {
     res.status(401).json({ error: 'Invalid or expired token' })
   }
 }
+
+// ─── Health check ─────────────────────────────────────────────────────────────
+app.get('/api/health', (_req, res) => res.json({ status: 'ok' }))
 
 // ─── Auth Routes ──────────────────────────────────────────────────────────────
 app.post('/api/auth/register', (req, res) => {
@@ -185,7 +190,16 @@ function parseAttempt(r) {
   }
 }
 
+// ─── Serve built React app in production ─────────────────────────────────────
+if (IS_PROD) {
+  const distPath = join(__dirname, 'dist')
+  app.use(express.static(distPath))
+  app.get('*', (_req, res) => res.sendFile(join(distPath, 'index.html')))
+}
+
 app.listen(PORT, () => {
   console.log(`\n  SQLite backend  →  http://localhost:${PORT}`)
-  console.log(`  Admin login     →  ${ADMIN_EMAIL}\n`)
+  console.log(`  Admin login     →  ${ADMIN_EMAIL}`)
+  if (IS_PROD) console.log(`  Serving frontend from dist/`)
+  console.log()
 })

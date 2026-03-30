@@ -1,0 +1,31 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        # Empty = browser uses same-origin /api/* (no hardcoded host needed)
+        VITE_API_BASE_URL: ""
+    image: scrummastery-pro
+    container_name: scrummastery-pro
+    ports:
+      - "${BACKEND_PORT:-6002}:6002"
+    environment:
+      NODE_ENV: production
+      BACKEND_PORT: 6002
+      JWT_SECRET: ${JWT_SECRET:-scrum-simulator-local-secret}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@gmail.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
+      DB_PATH: /data/database.sqlite
+    volumes:
+      - sqlite_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:6002/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  sqlite_data:
+    driver: local
