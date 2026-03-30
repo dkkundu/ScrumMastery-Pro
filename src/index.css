@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .animate-in {
+    animation-fill-mode: both;
+  }
+  .fade-in {
+    animation-name: fade-in;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
+  }
+  .slide-in-from-bottom-4 {
+    animation-name: slide-in-from-bottom-4;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-out;
+  }
+  .scale-in-95 {
+    animation-name: scale-in-95;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
+  }
+}

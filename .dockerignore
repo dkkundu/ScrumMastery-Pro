@@ -1,0 +1,34 @@
+# Dependencies (installed inside container)
+node_modules/
+
+# Build artifacts
+dist/
+
+# Local environment (inject via docker run -e or --env-file)
+.env
+.env.local
+.env.*.local
+
+# SQLite database (use a volume instead)
+*.sqlite
+*.sqlite3
+*.db
+
+# Logs
+*.log
+logs/
+
+# Git
+.git/
+.gitignore
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vite cache
+.vite/
